@@ -8,7 +8,8 @@ export default class Admin extends Component {
       inputs: {
         playerA: this.res
       },
-      retrieved: [],
+      retrievedArray: [],
+      retrievedObj: {},
       pick: {}
     };
   }
@@ -21,16 +22,24 @@ export default class Admin extends Component {
     });
   };
   async search(e) {
-    console.log("now we search the api", this.state.inputs.playerA);
     let url =
       "http://lookup-service-prod.mlb.com/json/named.search_player_all.bam?sport_code='mlb'&active_sw='Y'&name_part='";
     try {
       const res = await fetch(url + this.state.inputs.playerA + "%25'");
       const data = await res.json();
+      let array = [];
       console.log(data.search_player_all.queryResults.row);
-      this.setState({
-        retrieved: data.search_player_all.queryResults.row
-      });
+      if (data.search_player_all.queryResults.row.length > 0) {
+        this.setState({
+          retrievedArray: data.search_player_all.queryResults.row
+        });
+      } else {
+        array.push(data.search_player_all.queryResults.row);
+        console.log(array);
+        this.setState({
+          retrievedArray: array
+        });
+      }
     } catch (error) {
       console.log("Swing and a miss: ", error);
     }
@@ -51,6 +60,8 @@ export default class Admin extends Component {
             <Table className="display">
               <thead>
                 <tr>
+                  <th></th>
+
                   <th>Name</th>
                   <th>Team</th>
                   <th>Position</th>
@@ -58,8 +69,13 @@ export default class Admin extends Component {
                 </tr>
               </thead>
               <tbody>
-                {this.state.retrieved.map((el, index) => (
+                {this.state.retrievedArray.map((el, index) => (
                   <tr key={index}>
+                    <td>
+                      <Label check>
+                        <Input type="checkbox" />
+                      </Label>
+                    </td>
                     <td>{el.name_display_first_last}</td>
                     <td>{el.team_abbrev}</td>
                     <td>{el.position}</td>
