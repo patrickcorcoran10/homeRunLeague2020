@@ -1,0 +1,20 @@
+{
+  "name": "homerunleague2020",
+  "version": "1.0.0",
+  "description": "Home Run League Website",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/patrickcorcoran10/homeRunLeague2020.git"
+  },
+  "author": "pc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/patrickcorcoran10/homeRunLeague2020/issues"
+  },
+  "homepage": "https://github.com/patrickcorcoran10/homeRunLeague2020#readme"
+}
