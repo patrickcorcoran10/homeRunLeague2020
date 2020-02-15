@@ -1,3 +1,7 @@
-.container {
+.title {
   font-family: topgun;
+  color: blue;
+  font-size: 40px;
+  padding-top: 30px;
+  text-align: center;
 }
