@@ -9,17 +9,25 @@ export default class Admin extends Component {
         playerA: this.res
       },
       retrievedArray: [],
-      retrievedObj: {},
-      pick: {}
+      month: "",
+      dongPlayer: "",
+      pick: ""
     };
   }
-  acceptPlayer = e => {
+
+  acceptPlayerSearch = e => {
     console.log(e.target.value);
     this.setState({
       inputs: {
         playerA: this.refs.player.value
       }
     });
+  };
+  acceptDongPlayer = e => {
+    this.setState({
+      dongPlayer: e.target.value
+    });
+    console.log("Our donger is ", e.target.value);
   };
   async search(e) {
     let url =
@@ -35,15 +43,30 @@ export default class Admin extends Component {
         });
       } else {
         array.push(data.search_player_all.queryResults.row);
-        console.log(array);
+        console.log(array[0]);
+
         this.setState({
           retrievedArray: array
         });
       }
     } catch (error) {
+      alert("Strike!");
       console.log("Swing and a miss: ", error);
     }
   }
+  acceptMonth = e => {
+    this.setState({
+      month: e.target.value
+    });
+    console.log("Our month is ", e.target.value);
+  };
+  handlePick = e => {
+    console.log("Player Name: ", e.target.value);
+  };
+  submit = e => {
+    e.preventDefault();
+    console.log("We are gong to submit our pick now.");
+  };
   render() {
     return (
       <div className="container">
@@ -53,37 +76,36 @@ export default class Admin extends Component {
             <p>This is the Drafting Page</p>
             <form>
               <p>Player Name: </p>
-              <input ref="player" onChange={this.acceptPlayer}></input>
+              <input
+                ref="player"
+                onChange={
+                  (this.acceptPlayerSearch = this.acceptPlayerSearch.bind(this))
+                }
+              ></input>
             </form>
-            <button onClick={this.search.bind(this)}>Search</button>
+            <button onClick={(this.search = this.search.bind(this))}>
+              Search
+            </button>
             <br></br>
-            <Table className="display">
-              <thead>
-                <tr>
-                  <th></th>
-
-                  <th>Name</th>
-                  <th>Team</th>
-                  <th>Position</th>
-                  <th>Pin</th>
-                </tr>
-              </thead>
-              <tbody>
+            <FormGroup>
+              <Label>Pick</Label>
+              <Input
+                type="select"
+                name="select"
+                id="exampleSelect"
+                onChange={(this.handlePick = this.handlePick.bind(this))}
+              >
+                <option>Player Select</option>
                 {this.state.retrievedArray.map((el, index) => (
-                  <tr key={index}>
-                    <td>
-                      <Label check>
-                        <Input type="checkbox" />
-                      </Label>
-                    </td>
-                    <td>{el.name_display_first_last}</td>
-                    <td>{el.team_abbrev}</td>
-                    <td>{el.position}</td>
-                    <td>{el.player_id}</td>
-                  </tr>
+                  <option value={el.player_id} key={index}>
+                    {el.name_display_first_last}
+                    {"("}
+                    {el.position}
+                    {")"} - {el.team_abbrev}
+                  </option>
                 ))}
-              </tbody>
-            </Table>
+              </Input>
+            </FormGroup>
             <FormGroup>
               <Label for="dongPlayer">Dong Player</Label>
               <Input
@@ -91,13 +113,16 @@ export default class Admin extends Component {
                 type="select"
                 name="selectDongPlayer"
                 id="dongPlayerSelect"
+                onChange={
+                  (this.acceptDongPlayer = this.acceptDongPlayer.bind(this))
+                }
               >
                 <option>Select Dong Player</option>
-                <option>Olsen</option>
-                <option>Corcoran</option>
-                <option>Ross</option>
-                <option>Lakeman</option>
-                <option>Massa</option>
+                <option value="olsen">Olsen</option>
+                <option value="corcoran">Corcoran</option>
+                <option value="ross">Ross</option>
+                <option value="lakeman">Lakeman</option>
+                <option value="massa">Massa</option>
               </Input>
             </FormGroup>
             <FormGroup>
@@ -107,17 +132,20 @@ export default class Admin extends Component {
                 type="select"
                 name="selectMonth"
                 id="selectMonth"
+                onChange={(this.acceptMonth = this.acceptMonth.bind(this))}
               >
                 <option>Select Month</option>
-                <option>April</option>
-                <option>May</option>
-                <option>June</option>
-                <option>July</option>
-                <option>August</option>
-                <option>September</option>
+                <option value="april">April</option>
+                <option value="may">May</option>
+                <option value="june">June</option>
+                <option value="july">July</option>
+                <option value="august">August</option>
+                <option value="september">September</option>
               </Input>
             </FormGroup>
-            <button>Submit</button>
+            <button onClick={(this.submit = this.submit.bind(this))}>
+              Submit
+            </button>
             <br />
             <p>Current Rosters</p>
             <Table></Table>
