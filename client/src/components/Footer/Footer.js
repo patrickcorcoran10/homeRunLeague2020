@@ -1,9 +1,10 @@
 import React from "react";
+import "./Footer.css";
 
 export default function Footer() {
   return (
-    <div>
-      <p>put your feet up</p>
+    <div className="footer">
+      <p>PCP Productions</p>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { FormGroup, Label, Input, Table } from "reactstrap";
+import superagent from "superagent";
 
 export default class Admin extends Component {
   constructor(props) {
@@ -61,11 +62,25 @@ export default class Admin extends Component {
     console.log("Our month is ", e.target.value);
   };
   handlePick = e => {
+    this.setState({
+      pick: e.target.value
+    });
     console.log("Player Name: ", e.target.value);
   };
   submit = e => {
     e.preventDefault();
     console.log("We are gong to submit our pick now.");
+    superagent
+      .post("/api/draft")
+      .send({
+        team: this.state.dongPlayer,
+        pick: this.state.pick,
+        month: this.state.month,
+        total: 0
+      })
+      .end((err, res) => {
+        console.log(res);
+      });
   };
   render() {
     return (
@@ -92,7 +107,7 @@ export default class Admin extends Component {
               <Input
                 type="select"
                 name="select"
-                id="exampleSelect"
+                ref="pick"
                 onChange={(this.handlePick = this.handlePick.bind(this))}
               >
                 <option>Player Select</option>
@@ -105,11 +120,10 @@ export default class Admin extends Component {
                   </option>
                 ))}
               </Input>
-            </FormGroup>
-            <FormGroup>
-              <Label for="dongPlayer">Dong Player</Label>
+
+              <Label for="team">Dong Player</Label>
               <Input
-                ref="dongPlayer"
+                ref="team"
                 type="select"
                 name="selectDongPlayer"
                 id="dongPlayerSelect"
@@ -124,8 +138,7 @@ export default class Admin extends Component {
                 <option value="lakeman">Lakeman</option>
                 <option value="massa">Massa</option>
               </Input>
-            </FormGroup>
-            <FormGroup>
+
               <Label for="month">Month</Label>
               <Input
                 ref="month"
@@ -149,6 +162,13 @@ export default class Admin extends Component {
             <br />
             <p>Current Rosters</p>
             <Table></Table>
+          </div>
+          <div className="col-md-2"></div>
+        </div>
+        <div className="row">
+          <div className="col-md-2"></div>
+          <div className="col-md-8">
+            <a href="/">Scoreboard</a>
           </div>
           <div className="col-md-2"></div>
         </div>
