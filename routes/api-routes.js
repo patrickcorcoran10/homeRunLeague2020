@@ -5,9 +5,22 @@ module.exports = function(app) {
   app.post("/api/draft", (req, res) => {
     db.Drafts.create({
       team: req.body.team,
-      pick: req.body.pick,
+      pickID: req.body.pickID,
+      pickName: req.body.pickName,
       month: req.body.month,
-      total: req.body.total
+      total: req.body.total,
+      cut: req.body.cut
+    }).then(dbData => {
+      res.json(dbData);
+    });
+  });
+  // GET Route for Admin Page
+  app.get("/api/april/draft-roster", (req, res) => {
+    db.Drafts.findAll({
+      where: {
+        cut: false,
+        month: "april"
+      }
     }).then(dbData => {
       res.json(dbData);
     });
