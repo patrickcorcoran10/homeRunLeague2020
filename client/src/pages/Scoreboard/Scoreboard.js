@@ -2,17 +2,18 @@ import React, { Component } from "react";
 import "./Scoreboard.css";
 import Moment from "react-moment";
 import "moment-timezone";
+import { Spinner } from "reactstrap";
 
 export default class Scoreboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      rosters: [],
+      isLoading: true,
+      rosters: {},
       scores: []
     };
   }
   async componentDidMount() {
-    console.log("here we are on the scoreboard");
     let olsen = [];
     let olsenObj = {};
     let massa = [];
@@ -77,7 +78,6 @@ export default class Scoreboard extends Component {
         massa: massa
       }
     });
-    // Now We Search the API for Our Home Run Information
     let pcObj = {};
     let pc = [];
     let mmObj = {};
@@ -97,10 +97,10 @@ export default class Scoreboard extends Component {
         const data = await res.json();
         pcObj = {
           name: team.name,
-          pickID: data.sport_hitting_tm.queryResults.row.player_id,
           hr: data.sport_hitting_tm.queryResults.row.hr
         };
         pc.push(pcObj);
+        console.log(pc);
       } catch (error) {
         console.log("Swing and a miss: ", error);
       }
@@ -166,8 +166,64 @@ export default class Scoreboard extends Component {
         }
       });
     });
+    setTimeout(
+      function() {
+        this.setState({
+          isLoading: false
+        });
+      }.bind(this),
+      1000
+    );
+    console.log("done");
   }
+
   render() {
+    if (this.state.isLoading) {
+      return (
+        <Spinner
+          style={{ width: "3rem", height: "3rem", alignSelf: "center" }}
+          type="grow"
+        />
+      );
+    }
+    if (!this.state.scores.pc.length > 0) {
+      return <div>We Failed</div>;
+    }
+    const corcoran = this.state.scores.pc.map((el, index) => (
+      <div key={index}>
+        <p>
+          {el.name} | {el.hr}
+        </p>
+      </div>
+    ));
+    const olsen = this.state.scores.to.map((el, index) => (
+      <div key={index}>
+        <p>
+          {el.name} | {el.hr}
+        </p>
+      </div>
+    ));
+    const ross = this.state.scores.rr.map((el, index) => (
+      <div key={index}>
+        <p>
+          {el.name} | {el.hr}
+        </p>
+      </div>
+    ));
+    const massa = this.state.scores.mm.map((el, index) => (
+      <div key={index}>
+        <p>
+          {el.name} | {el.hr}
+        </p>
+      </div>
+    ));
+    const lakeman = this.state.scores.jl.map((el, index) => (
+      <div key={index}>
+        <p>
+          {el.name} | {el.hr}
+        </p>
+      </div>
+    ));
     console.log(this.state);
     return (
       <div className="container">
@@ -199,9 +255,28 @@ export default class Scoreboard extends Component {
           <div className="col-md-2"></div>
         </div>
         <div className="row">
-          <div className="col-md-2"></div>
-          <div className="col-md-8"></div>
-          <div className="col-md-2"></div>
+          <div className="col-md-1"></div>
+          <div className="col-md-2">
+            <h6>Corcoran</h6>
+            {corcoran}
+          </div>
+          <div className="col-md-2">
+            <h6>Olsen</h6>
+            {olsen}
+          </div>
+          <div className="col-md-2">
+            <h6>Massa</h6>
+            {massa}
+          </div>
+          <div className="col-md-2">
+            <h6>Ross</h6>
+            {ross}
+          </div>
+          <div className="col-md-2">
+            <h6>Lakeman</h6>
+            {lakeman}
+          </div>
+          <div className="col-md-1"></div>
         </div>
       </div>
     );

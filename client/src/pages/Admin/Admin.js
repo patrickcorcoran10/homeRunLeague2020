@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { FormGroup, Label, Input } from "reactstrap";
+import { FormGroup, Input } from "reactstrap";
 import superagent from "superagent";
 import "./Admin.css";
 
@@ -191,7 +191,6 @@ export default class Admin extends Component {
             <a href="/">Go To Scoreboard</a>
             <br />
             <form>
-              <p>Player Name: </p>
               <input
                 ref="player"
                 onChange={
@@ -204,7 +203,6 @@ export default class Admin extends Component {
             </button>
             <br></br>
             <FormGroup>
-              <Label>Pick</Label>
               <Input
                 type="select"
                 name="select"
@@ -225,8 +223,6 @@ export default class Admin extends Component {
                   </option>
                 ))}
               </Input>
-
-              <Label for="team">Dong Player</Label>
               <Input
                 ref="team"
                 type="select"
@@ -243,8 +239,6 @@ export default class Admin extends Component {
                 <option value="lakeman">Lakeman</option>
                 <option value="massa">Massa</option>
               </Input>
-
-              <Label for="month">Month</Label>
               <Input
                 ref="month"
                 type="select"
