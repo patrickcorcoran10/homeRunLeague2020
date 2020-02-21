@@ -25,6 +25,17 @@ module.exports = function(app) {
       res.json(dbData);
     });
   });
+  // GET Route for the Scoreboard Page
+  app.get("/api/april/scoreboard", (req, res) => {
+    db.Drafts.findAll({
+      where: {
+        cut: false,
+        month: "april"
+      }
+    }).then(dbData => {
+      res.json(dbData);
+    });
+  });
   // DELETE Route for Deleted Players on Admin Page
   app.delete("/api/delete:id", (req, res) => {
     db.Drafts.destroy({
