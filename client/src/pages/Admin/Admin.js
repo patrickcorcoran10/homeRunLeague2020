@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { FormGroup, Label, Input } from "reactstrap";
 import superagent from "superagent";
 import "./Admin.css";
-import { FaCut } from "react-icons/fa";
-import { MdCancel } from "react-icons/md";
 
 export default class Admin extends Component {
   constructor(props) {
@@ -282,7 +280,6 @@ export default class Admin extends Component {
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
                     Cut
-                    {/* <FaCut /> */}
                   </button>
                   {el.name}
                   <button
@@ -290,7 +287,6 @@ export default class Admin extends Component {
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
                     Delete
-                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
@@ -307,7 +303,6 @@ export default class Admin extends Component {
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
                     Cut
-                    {/* <FaCut /> */}
                   </button>
                   {el.name}
                   <button
@@ -315,7 +310,6 @@ export default class Admin extends Component {
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
                     Delete
-                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
@@ -331,7 +325,6 @@ export default class Admin extends Component {
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
                     Cut
-                    {/* <FaCut /> */}
                   </button>
                   {el.name}
                   <button
@@ -339,7 +332,6 @@ export default class Admin extends Component {
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
                     Delete
-                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
@@ -355,7 +347,6 @@ export default class Admin extends Component {
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
                     Cut
-                    {/* <FaCut /> */}
                   </button>
                   {el.name}
                   <button
@@ -363,7 +354,6 @@ export default class Admin extends Component {
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
                     Delete
-                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
@@ -379,7 +369,6 @@ export default class Admin extends Component {
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
                     Cut
-                    {/* <FaCut /> */}
                   </button>
                   {el.name}
                   <button
@@ -387,7 +376,6 @@ export default class Admin extends Component {
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
                     Delete
-                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
