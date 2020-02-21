@@ -25,4 +25,29 @@ module.exports = function(app) {
       res.json(dbData);
     });
   });
+  // DELETE Route for Deleted Players on Admin Page
+  app.delete("/api/delete:id", (req, res) => {
+    db.Drafts.destroy({
+      where: {
+        id: req.params.id
+      }
+    }).then(dbData => {
+      res.json(dbData);
+    });
+  });
+  // PUT Route for Cut Players on Admin Page
+  app.put("/api/cut-player:id", (req, res) => {
+    db.Drafts.update(
+      {
+        cut: true
+      },
+      {
+        where: {
+          id: req.params.id
+        }
+      }
+    ).then(dbData => {
+      res.json(dbData);
+    });
+  });
 };

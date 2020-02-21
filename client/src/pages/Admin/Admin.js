@@ -95,56 +95,59 @@ export default class Admin extends Component {
       })
       .end((err, res) => {
         console.log(res);
+        window.location.reload();
       });
-    console.log("We have submitted and now we reset the form.");
-    this.refs.team.value = "";
-    this.refs.month.value = "";
-    this.refs.pick.value = "";
-    this.setState({
-      inputs: {
-        playerA: ""
-      },
-      retrievedArray: [],
-      month: "",
-      team: "",
-      pickID: "",
-      pickName: ""
-    });
-    window.location.reload();
   }
 
   async componentDidMount() {
     let olsen = [];
-    let olsenIDs = [];
+    let olsenObj = {};
     let massa = [];
-    let massaIDs = [];
+    let massaObj = {};
     let corcoran = [];
-    let corcoranIDs = [];
+    let corcoranObj = {};
     let lakeman = [];
-    let lakemanIDs = [];
+    let lakemanObj = {};
     let ross = [];
-    let rossIDs = [];
+    let rossObj = {};
     const res = await fetch("/api/april/draft-roster");
     const data = await res.json();
     data.forEach(async data => {
       if (data.team === "olsen") {
-        olsen.push(data.pickName);
-        olsenIDs.push(data.id);
+        olsenObj = {
+          name: data.pickName,
+          id: data.id
+        };
+        olsen.push(olsenObj);
       } else if (data.team === "corcoran") {
-        corcoran.push(data.pickName);
-        corcoranIDs.push(data.id);
+        corcoranObj = {
+          name: data.pickName,
+          id: data.id
+        };
+        corcoran.push(corcoranObj);
       } else if (data.team === "massa") {
-        massa.push(data.pickName);
-        massaIDs.push(data.id);
+        massaObj = {
+          name: data.pickName,
+          id: data.id
+        };
+        massa.push(massaObj);
       } else if (data.team === "ross") {
-        ross.push(data.pickName);
-        rossIDs.push(data.id);
+        rossObj = {
+          name: data.pickName,
+          id: data.id
+        };
+        ross.push(rossObj);
       } else {
-        lakeman.push(data.pickName);
-        lakemanIDs.push(data.id);
+        lakemanObj = {
+          name: data.pickName,
+          id: data.id
+        };
+        lakeman.push(lakemanObj);
       }
     });
-    await this.setState({
+    console.log(corcoran);
+
+    this.setState({
       rosters: {
         corcoran: corcoran,
         olsen: olsen,
@@ -154,12 +157,32 @@ export default class Admin extends Component {
       }
     });
   }
-  deletePlayer = e => {
+  async deletePlayer(e) {
+    //   Currently Not Working
+    e.preventDefault();
+    let deleteID = e.target.value;
     console.log("Now we delete", e.target.value);
-  };
-  cutPlayer = e => {
-    console.log("Now we are cutting a Player", this.refs.value);
-  };
+    await fetch("/api/delete" + deleteID, {
+      method: "DELETE"
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        window.location.reload();
+      });
+  }
+  async cutPlayer(e) {
+    e.preventDefault();
+    let cutID = e.target.value;
+    fetch("/api/cut-player" + cutID, {
+      method: "PUT"
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        window.location.reload();
+      });
+  }
 
   render() {
     return (
@@ -251,21 +274,23 @@ export default class Admin extends Component {
           <div className="col-md-1"></div>
           <div className="col-md-2">
             <h6>Corcoran</h6>
-            {this.state.rosters.corcoran.map((name, index) => (
+            {this.state.rosters.corcoran.map((el, index) => (
               <div key={index}>
                 <p>
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
-                    <FaCut />
+                    Cut
+                    {/* <FaCut /> */}
                   </button>
-                  {name}
+                  {el.name}
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
-                    <MdCancel />
+                    Delete
+                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
@@ -274,21 +299,23 @@ export default class Admin extends Component {
 
           <div className="col-md-2">
             <h6>Olsen</h6>
-            {this.state.rosters.olsen.map((name, index) => (
+            {this.state.rosters.olsen.map((el, index) => (
               <div key={index}>
                 <p>
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
-                    <FaCut />
+                    Cut
+                    {/* <FaCut /> */}
                   </button>
-                  {name}
+                  {el.name}
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
-                    <MdCancel />
+                    Delete
+                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
@@ -296,21 +323,23 @@ export default class Admin extends Component {
           </div>
           <div className="col-md-2">
             <h6>Massa</h6>
-            {this.state.rosters.massa.map((name, index) => (
+            {this.state.rosters.massa.map((el, index) => (
               <div key={index}>
                 <p>
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
-                    <FaCut />
+                    Cut
+                    {/* <FaCut /> */}
                   </button>
-                  {name}
+                  {el.name}
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
-                    <MdCancel />
+                    Delete
+                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
@@ -318,21 +347,23 @@ export default class Admin extends Component {
           </div>
           <div className="col-md-2">
             <h6>Ross</h6>
-            {this.state.rosters.ross.map((name, index) => (
+            {this.state.rosters.ross.map((el, index) => (
               <div key={index}>
                 <p>
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
-                    <FaCut />
+                    Cut
+                    {/* <FaCut /> */}
                   </button>
-                  {name}
+                  {el.name}
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
-                    <MdCancel />
+                    Delete
+                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
@@ -340,21 +371,23 @@ export default class Admin extends Component {
           </div>
           <div className="col-md-2">
             <h6>Lakeman</h6>
-            {this.state.rosters.lakeman.map((name, index) => (
+            {this.state.rosters.lakeman.map((el, index) => (
               <div key={index}>
                 <p>
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
                   >
-                    <FaCut />
+                    Cut
+                    {/* <FaCut /> */}
                   </button>
-                  {name}
+                  {el.name}
                   <button
-                    value={name}
+                    value={el.id}
                     onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
                   >
-                    <MdCancel />
+                    Delete
+                    {/* <MdCancel /> */}
                   </button>
                 </p>
               </div>
