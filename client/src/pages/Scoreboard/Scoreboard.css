@@ -1,7 +1,35 @@
 .title {
   font-family: topgun;
-  color: blue;
-  font-size: 40px;
+  color: #000054;
+  font-size: 130px;
   padding-top: 30px;
   text-align: center;
+}
+
+#title,
+#leaderboard {
+  background-color: whitesmoke;
+  font-family: "Cinzel", serif;
+  color: black;
+}
+#number {
+  font-size: 15px;
+}
+td,
+th {
+  padding-right: 30px;
+  padding-left: 30px;
+  text-align: right;
+  background-color: whitesmoke;
+  font-family: "Cinzel", serif;
+  font-size: 9px;
+  border-color: black;
+  border-width: 50px;
+}
+#totals {
+  font: bold;
+  font-size: 20px;
+}
+#loading {
+  align-content: center;
 }

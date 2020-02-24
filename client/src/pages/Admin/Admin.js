@@ -1,7 +1,17 @@
 import React, { Component } from "react";
-import { FormGroup, Input } from "reactstrap";
 import superagent from "superagent";
 import "./Admin.css";
+import Moment from "react-moment";
+import axios from "axios";
+import {
+  FormGroup,
+  Button,
+  Input,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from "reactstrap";
 
 export default class Admin extends Component {
   constructor(props) {
@@ -80,7 +90,21 @@ export default class Admin extends Component {
   };
   async submit(e) {
     e.preventDefault();
-    console.log("We are gong to submit our pick now.");
+    let data = [];
+    let url =
+      "https://lookup-service-prod.mlb.com/json/named.sport_hitting_tm.bam?league_list_id='mlb'&game_type='R'&season='2019'&player_id=";
+    try {
+      const res = await fetch(url + this.state.pickID);
+      data = await res.json();
+    } catch (error) {
+      console.log("Swing and a miss: ", error);
+    }
+    console.log(
+      "We are gong to submit",
+      this.state.pickName,
+      "with",
+      data.sport_hitting_tm.queryResults.row.hr
+    );
     superagent
       .post("/api/draft")
       .send({
@@ -88,7 +112,7 @@ export default class Admin extends Component {
         pickID: this.state.pickID,
         pickName: this.state.pickName,
         month: this.state.month,
-        total: 0,
+        total: parseInt(data.sport_hitting_tm.queryResults.row.hr),
         cut: false
       })
       .end((err, res) => {
@@ -110,35 +134,46 @@ export default class Admin extends Component {
     let rossObj = {};
     const res = await fetch("/api/april/draft-roster");
     const data = await res.json();
+    console.log(data);
     data.forEach(async data => {
       if (data.team === "olsen") {
         olsenObj = {
           name: data.pickName,
-          id: data.id
+          id: data.id,
+          pickID: data.pickID,
+          total: data.total
         };
         olsen.push(olsenObj);
       } else if (data.team === "corcoran") {
         corcoranObj = {
           name: data.pickName,
-          id: data.id
+          id: data.id,
+          pickID: data.pickID,
+          total: data.total
         };
         corcoran.push(corcoranObj);
       } else if (data.team === "massa") {
         massaObj = {
           name: data.pickName,
-          id: data.id
+          id: data.id,
+          pickID: data.pickID,
+          total: data.total
         };
         massa.push(massaObj);
       } else if (data.team === "ross") {
         rossObj = {
           name: data.pickName,
-          id: data.id
+          id: data.id,
+          pickID: data.pickID,
+          total: data.total
         };
         ross.push(rossObj);
       } else {
         lakemanObj = {
           name: data.pickName,
-          id: data.id
+          id: data.id,
+          total: data.total,
+          pickID: data.pickID
         };
         lakeman.push(lakemanObj);
       }
@@ -156,7 +191,6 @@ export default class Admin extends Component {
     });
   }
   async deletePlayer(e) {
-    //   Currently Not Working
     e.preventDefault();
     let deleteID = e.target.value;
     console.log("Now we delete", e.target.value);
@@ -181,6 +215,29 @@ export default class Admin extends Component {
         window.location.reload();
       });
   }
+  async keepPlayer(e) {
+    e.preventDefault();
+    let playerObj = {};
+    let keepPlayerID = e.target.value;
+    console.log(keepPlayerID);
+    let url =
+      "https://lookup-service-prod.mlb.com/json/named.sport_hitting_tm.bam?league_list_id='mlb'&game_type='R'&season='2019'&player_id=";
+
+    const res = await fetch(url + keepPlayerID);
+    const data = await res.json();
+    playerObj = {
+      pickID: keepPlayerID,
+      total: data.sport_hitting_tm.queryResults.row.hr,
+      hr: data.sport_hitting_tm.queryResults.row.hr
+    };
+    console.log(playerObj.total);
+    axios
+      .put("/api/keep/" + playerObj.pickID, { total: playerObj.total })
+      .then(res => {
+        console.log(res);
+        window.location.reload();
+      });
+  }
 
   render() {
     return (
@@ -198,9 +255,12 @@ export default class Admin extends Component {
                 }
               ></input>
             </form>
-            <button onClick={(this.search = this.search.bind(this))}>
+            <Button
+              color="success"
+              onClick={(this.search = this.search.bind(this))}
+            >
               Search
-            </button>
+            </Button>{" "}
             <br></br>
             <FormGroup>
               <Input
@@ -255,12 +315,24 @@ export default class Admin extends Component {
                 <option value="september">September</option>
               </Input>
             </FormGroup>
-            <button onClick={(this.submit = this.submit.bind(this))}>
+            <Button
+              color="success"
+              onClick={(this.submit = this.submit.bind(this))}
+            >
               Submit
-            </button>
+            </Button>{" "}
             <br />
           </div>
           <div className="col-md-2"></div>
+        </div>
+        <div className="row">
+          <div className="col-md-4"></div>
+          <div className="col-md-4">
+            <h6>
+              Rosters for <Moment format="LL" />
+            </h6>
+          </div>
+          <div className="col-md-4"></div>
         </div>
         <div className="row">
           <div className="col-md-1"></div>
@@ -268,21 +340,32 @@ export default class Admin extends Component {
             <h6>Corcoran</h6>
             {this.state.rosters.corcoran.map((el, index) => (
               <div key={index}>
-                <p>
-                  <button
-                    value={el.id}
-                    onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
-                  >
-                    Cut
-                  </button>
-                  {el.name}
-                  <button
-                    value={el.id}
-                    onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
-                  >
-                    Delete
-                  </button>
-                </p>
+                <UncontrolledDropdown>
+                  <DropdownToggle caret>{el.name}</DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      value={el.id}
+                      onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
+                    >
+                      Cut Player
+                    </DropdownItem>
+                    <DropdownItem
+                      value={el.pickID}
+                      onClick={(this.keepPlayer = this.keepPlayer.bind(this))}
+                    >
+                      Keep Player
+                    </DropdownItem>{" "}
+                    <DropdownItem divider />
+                    <DropdownItem
+                      value={el.id}
+                      onClick={
+                        (this.deletePlayer = this.deletePlayer.bind(this))
+                      }
+                    >
+                      Delete Player
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
               </div>
             ))}
           </div>
@@ -291,89 +374,133 @@ export default class Admin extends Component {
             <h6>Olsen</h6>
             {this.state.rosters.olsen.map((el, index) => (
               <div key={index}>
-                <p>
-                  <button
-                    value={el.id}
-                    onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
-                  >
-                    Cut
-                  </button>
-                  {el.name}
-                  <button
-                    value={el.id}
-                    onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
-                  >
-                    Delete
-                  </button>
-                </p>
+                <UncontrolledDropdown>
+                  <DropdownToggle caret>{el.name}</DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      value={el.id}
+                      onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
+                    >
+                      Cut Player
+                    </DropdownItem>
+                    <DropdownItem
+                      value={el.pickID}
+                      onClick={(this.keepPlayer = this.keepPlayer.bind(this))}
+                    >
+                      Keep Player
+                    </DropdownItem>
+                    <DropdownItem divider />
+                    <DropdownItem
+                      value={el.id}
+                      onClick={
+                        (this.deletePlayer = this.deletePlayer.bind(this))
+                      }
+                    >
+                      Delete Player
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
               </div>
-            ))}
+            ))}{" "}
           </div>
           <div className="col-md-2">
             <h6>Massa</h6>
             {this.state.rosters.massa.map((el, index) => (
               <div key={index}>
-                <p>
-                  <button
-                    value={el.id}
-                    onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
-                  >
-                    Cut
-                  </button>
-                  {el.name}
-                  <button
-                    value={el.id}
-                    onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
-                  >
-                    Delete
-                  </button>
-                </p>
+                <UncontrolledDropdown>
+                  <DropdownToggle caret>{el.name}</DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      value={el.id}
+                      onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
+                    >
+                      Cut Player
+                    </DropdownItem>
+                    <DropdownItem
+                      value={el.pickID}
+                      onClick={(this.keepPlayer = this.keepPlayer.bind(this))}
+                    >
+                      Keep Player
+                    </DropdownItem>{" "}
+                    <DropdownItem divider />
+                    <DropdownItem
+                      value={el.id}
+                      onClick={
+                        (this.deletePlayer = this.deletePlayer.bind(this))
+                      }
+                    >
+                      Delete Player
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
               </div>
-            ))}
+            ))}{" "}
           </div>
           <div className="col-md-2">
             <h6>Ross</h6>
             {this.state.rosters.ross.map((el, index) => (
               <div key={index}>
-                <p>
-                  <button
-                    value={el.id}
-                    onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
-                  >
-                    Cut
-                  </button>
-                  {el.name}
-                  <button
-                    value={el.id}
-                    onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
-                  >
-                    Delete
-                  </button>
-                </p>
+                <UncontrolledDropdown>
+                  <DropdownToggle caret>{el.name}</DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      value={el.id}
+                      onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
+                    >
+                      Cut Player
+                    </DropdownItem>
+                    <DropdownItem
+                      value={el.pickID}
+                      onClick={(this.keepPlayer = this.keepPlayer.bind(this))}
+                    >
+                      Keep Player
+                    </DropdownItem>{" "}
+                    <DropdownItem divider />
+                    <DropdownItem
+                      value={el.id}
+                      onClick={
+                        (this.deletePlayer = this.deletePlayer.bind(this))
+                      }
+                    >
+                      Delete Player
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
               </div>
-            ))}
+            ))}{" "}
           </div>
           <div className="col-md-2">
             <h6>Lakeman</h6>
             {this.state.rosters.lakeman.map((el, index) => (
               <div key={index}>
-                <p>
-                  <button
-                    value={el.id}
-                    onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
-                  >
-                    Cut
-                  </button>
-                  {el.name}
-                  <button
-                    value={el.id}
-                    onClick={(this.deletePlayer = this.deletePlayer.bind(this))}
-                  >
-                    Delete
-                  </button>
-                </p>
+                <UncontrolledDropdown>
+                  <DropdownToggle caret>{el.name}</DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem
+                      value={el.id}
+                      onClick={(this.cutPlayer = this.cutPlayer.bind(this))}
+                    >
+                      Cut Player
+                    </DropdownItem>
+                    <DropdownItem
+                      value={el.pickID}
+                      onClick={(this.keepPlayer = this.keepPlayer.bind(this))}
+                    >
+                      Keep Player
+                    </DropdownItem>{" "}
+                    <DropdownItem divider />
+                    <DropdownItem
+                      value={el.id}
+                      onClick={
+                        (this.deletePlayer = this.deletePlayer.bind(this))
+                      }
+                    >
+                      Delete Player
+                    </DropdownItem>
+                  </DropdownMenu>
+                </UncontrolledDropdown>
               </div>
-            ))}
+            ))}{" "}
           </div>
           <div className="col-md-1"></div>
         </div>

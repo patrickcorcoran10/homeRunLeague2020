@@ -61,4 +61,20 @@ module.exports = function(app) {
       res.json(dbData);
     });
   });
+  // PUT Route for Updating HR Totals
+  app.put("/api/keep/:pickID", (req, res) => {
+    db.Drafts.update(
+      {
+        total: req.body.total
+        // total: "35"
+      },
+      {
+        where: {
+          pickID: req.params.pickID
+        }
+      }
+    ).then(dbData => {
+      res.json(dbData);
+    });
+  });
 };

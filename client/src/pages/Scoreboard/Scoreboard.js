@@ -95,9 +95,11 @@ export default class Scoreboard extends Component {
       try {
         const res = await fetch(url + team.pickID);
         const data = await res.json();
+
         pcObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr
+          hr: data.sport_hitting_tm.queryResults.row.hr,
+          total: team.total
         };
         pc.push(pcObj);
         console.log(pc);
@@ -111,7 +113,8 @@ export default class Scoreboard extends Component {
         const data = await res.json();
         toObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr
+          hr: data.sport_hitting_tm.queryResults.row.hr,
+          total: team.total
         };
         to.push(toObj);
       } catch (error) {
@@ -124,7 +127,8 @@ export default class Scoreboard extends Component {
         const data = await res.json();
         mmObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr
+          hr: data.sport_hitting_tm.queryResults.row.hr,
+          total: team.total
         };
         mm.push(mmObj);
       } catch (error) {
@@ -137,7 +141,8 @@ export default class Scoreboard extends Component {
         const data = await res.json();
         jlObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr
+          hr: data.sport_hitting_tm.queryResults.row.hr,
+          total: team.total
         };
         jl.push(jlObj);
       } catch (error) {
@@ -150,7 +155,8 @@ export default class Scoreboard extends Component {
         const data = await res.json();
         rrObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr
+          hr: data.sport_hitting_tm.queryResults.row.hr,
+          total: team.total
         };
         rr.push(rrObj);
       } catch (error) {
@@ -180,47 +186,54 @@ export default class Scoreboard extends Component {
   render() {
     if (this.state.isLoading) {
       return (
-        <Spinner
-          style={{ width: "3rem", height: "3rem", alignSelf: "center" }}
-          type="grow"
-        />
+        <div className="container">
+          <div className="row">
+            <div className="col-md-5"></div>
+            <div className="col-md-2">
+              {" "}
+              <Spinner
+                style={{ width: "3rem", height: "3rem", paddingTop: "4rem" }}
+                type="grow"
+              />
+            </div>
+            <div className="col-md-5"></div>
+          </div>
+        </div>
       );
     }
-    if (!this.state.scores.pc.length > 0) {
-      return <div>We Failed</div>;
-    }
+
     const corcoran = this.state.scores.pc.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr}
+          {el.name} | {el.hr - el.total}
         </p>
       </div>
     ));
     const olsen = this.state.scores.to.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr}
+          {el.name} | {el.hr - el.total}
         </p>
       </div>
     ));
     const ross = this.state.scores.rr.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr}
+          {el.name} | {el.hr - el.total}
         </p>
       </div>
     ));
     const massa = this.state.scores.mm.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr}
+          {el.name} | {el.hr - el.total}
         </p>
       </div>
     ));
     const lakeman = this.state.scores.jl.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr}
+          {el.name} | {el.hr - el.total}
         </p>
       </div>
     ));
@@ -240,14 +253,64 @@ export default class Scoreboard extends Component {
             <table>
               <tbody>
                 <tr>
-                  <th>Call Sign</th>
+                  <th>House</th>
                   <th>April</th>
                   <th>May</th>
                   <th>June</th>
                   <th>July</th>
-                  <th>August</th>
-                  <th>September</th>
-                  <th>Totals</th>
+                  <th>Aug.</th>
+                  <th>Sept.</th>
+                  <th id="totals">TOTALS</th>
+                </tr>
+                <tr className="lakeman">
+                  <td>Ser Lakeman</td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="totals"></td>
+                </tr>
+                <tr className="olsen">
+                  <td>Ser Olsen</td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="totals"></td>
+                </tr>
+                <tr className="ross">
+                  <td>Ser Ross</td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="totals"></td>
+                </tr>
+                <tr className="corcoran">
+                  <td>Ser Corcoran</td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="totals"></td>
+                </tr>
+                <tr className="massa">
+                  <td>Ser Massa</td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="number"></td>
+                  <td id="totals"></td>
                 </tr>
               </tbody>
             </table>
