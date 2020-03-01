@@ -242,8 +242,23 @@ export default class Admin extends Component {
         window.location.reload();
       });
   }
+  handleLogOut = e => {
+    e.preventDefault();
+    axios
+      .post("/api/logout", {})
+      .then(res => {
+        alert("You're now logged out.");
+        sessionStorage.setItem("jwt", "");
+        this.props.history.push("/");
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  };
 
   render() {
+    if (!sessionStorage.jwt) this.props.history.push("/login");
+
     return (
       <div className="container">
         <div className="row">
@@ -257,6 +272,12 @@ export default class Admin extends Component {
             <br />
             <a href="/register">Register</a>
             <br />
+            <Button
+              color="danger"
+              onClick={(this.handleLogOut = this.handleLogOut.bind(this))}
+            >
+              Log Out
+            </Button>
             <form>
               <input
                 ref="player"

@@ -1,18 +1,45 @@
 import React, { Component } from "react";
+import superagent from "superagent";
 
 export default class Register extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-  handleName = e => {};
+  handleName = e => {
+    console.log("Name:", e.target.value);
+    this.setState({
+      name: e.target.value
+    });
+  };
   handleEmail = e => {
-    console.log(e.target.value);
+    console.log("Email: ", e.target.value);
     this.setState({
       email: e.target.value
     });
   };
-  handlePassword = e => {};
+  handlePassword = e => {
+    this.setState({
+      password: e.target.value
+    });
+  };
+  handleSubmit = e => {
+    e.preventDefault();
+    // let data = {};
+    console.log(this.state);
+    // data = this.state;
+    superagent
+      .post("/api/register")
+      .send({
+        // name: this.state.name,
+        email: this.state.email,
+        password: this.state.password
+      })
+      .end((err, res) => {
+        console.log(res);
+        // window.location.replace(res);
+      });
+  };
 
   render() {
     return (
@@ -23,18 +50,41 @@ export default class Register extends Component {
             <h5>Register</h5>
             <form>
               <div>
-                <label for="name">Name</label>
-                <input for="name" id="name" name="name" required />
+                <label>Name</label>
+                <input
+                  id="name"
+                  name="name"
+                  required
+                  onChange={(this.handleName = this.handleName.bind(this))}
+                />
               </div>
               <div>
-                <label for="email">Email</label>
-                <input for="email" id="email" name="email" required />
+                <label>Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  required
+                  onChange={(this.handleEmail = this.handleEmail.bind(this))}
+                />
               </div>
               <div>
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required />
+                <label>Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  required
+                  onChange={
+                    (this.handlePassword = this.handlePassword.bind(this))
+                  }
+                />
               </div>
-              <button type="submit">Register</button>
+              <button
+                type="submit"
+                onClick={(this.handleSubmit = this.handleSubmit.bind(this))}
+              >
+                Register
+              </button>
             </form>
             <a href="/">Go To Scoreboard</a>
             <br />
