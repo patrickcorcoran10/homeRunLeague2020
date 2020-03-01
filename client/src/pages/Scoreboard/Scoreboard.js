@@ -10,7 +10,7 @@ export default class Scoreboard extends Component {
     this.state = {
       isLoading: true,
       rosters: {},
-      scores: []
+      scores: {}
     };
   }
   async componentDidMount() {
@@ -202,35 +202,35 @@ export default class Scoreboard extends Component {
       );
     }
 
-    const corcoran = this.state.scores.pc.map((el, index) => (
+    let corcoran = this.state.scores.pc.map((el, index) => (
       <div key={index}>
         <p>
           {el.name} | {el.hr - el.total}
         </p>
       </div>
     ));
-    const olsen = this.state.scores.to.map((el, index) => (
+    let olsen = this.state.scores.to.map((el, index) => (
       <div key={index}>
         <p>
           {el.name} | {el.hr - el.total}
         </p>
       </div>
     ));
-    const ross = this.state.scores.rr.map((el, index) => (
+    let ross = this.state.scores.rr.map((el, index) => (
       <div key={index}>
         <p>
           {el.name} | {el.hr - el.total}
         </p>
       </div>
     ));
-    const massa = this.state.scores.mm.map((el, index) => (
+    let massa = this.state.scores.mm.map((el, index) => (
       <div key={index}>
         <p>
           {el.name} | {el.hr - el.total}
         </p>
       </div>
     ));
-    const lakeman = this.state.scores.jl.map((el, index) => (
+    let lakeman = this.state.scores.jl.map((el, index) => (
       <div key={index}>
         <p>
           {el.name} | {el.hr - el.total}
@@ -253,7 +253,7 @@ export default class Scoreboard extends Component {
             <table>
               <tbody>
                 <tr>
-                  <th>House</th>
+                  <th>Call Sign</th>
                   <th>April</th>
                   <th>May</th>
                   <th>June</th>
@@ -263,7 +263,7 @@ export default class Scoreboard extends Component {
                   <th id="totals">TOTALS</th>
                 </tr>
                 <tr className="lakeman">
-                  <td>Ser Lakeman</td>
+                  <td>Lakeman</td>
                   <td id="number"></td>
                   <td id="number"></td>
                   <td id="number"></td>
@@ -273,7 +273,7 @@ export default class Scoreboard extends Component {
                   <td id="totals"></td>
                 </tr>
                 <tr className="olsen">
-                  <td>Ser Olsen</td>
+                  <td>Olsen</td>
                   <td id="number"></td>
                   <td id="number"></td>
                   <td id="number"></td>
@@ -283,7 +283,7 @@ export default class Scoreboard extends Component {
                   <td id="totals"></td>
                 </tr>
                 <tr className="ross">
-                  <td>Ser Ross</td>
+                  <td>Ross</td>
                   <td id="number"></td>
                   <td id="number"></td>
                   <td id="number"></td>
@@ -293,7 +293,7 @@ export default class Scoreboard extends Component {
                   <td id="totals"></td>
                 </tr>
                 <tr className="corcoran">
-                  <td>Ser Corcoran</td>
+                  <td>Corcoran</td>
                   <td id="number"></td>
                   <td id="number"></td>
                   <td id="number"></td>
@@ -303,7 +303,7 @@ export default class Scoreboard extends Component {
                   <td id="totals"></td>
                 </tr>
                 <tr className="massa">
-                  <td>Ser Massa</td>
+                  <td>Massa</td>
                   <td id="number"></td>
                   <td id="number"></td>
                   <td id="number"></td>

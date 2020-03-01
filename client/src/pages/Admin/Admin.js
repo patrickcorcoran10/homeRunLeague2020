@@ -141,6 +141,7 @@ export default class Admin extends Component {
           name: data.pickName,
           id: data.id,
           pickID: data.pickID,
+          month: data.month,
           total: data.total
         };
         olsen.push(olsenObj);
@@ -149,6 +150,7 @@ export default class Admin extends Component {
           name: data.pickName,
           id: data.id,
           pickID: data.pickID,
+          month: data.month,
           total: data.total
         };
         corcoran.push(corcoranObj);
@@ -157,6 +159,7 @@ export default class Admin extends Component {
           name: data.pickName,
           id: data.id,
           pickID: data.pickID,
+          month: data.month,
           total: data.total
         };
         massa.push(massaObj);
@@ -165,6 +168,7 @@ export default class Admin extends Component {
           name: data.pickName,
           id: data.id,
           pickID: data.pickID,
+          month: data.month,
           total: data.total
         };
         ross.push(rossObj);
@@ -173,12 +177,12 @@ export default class Admin extends Component {
           name: data.pickName,
           id: data.id,
           total: data.total,
+          month: data.month,
           pickID: data.pickID
         };
         lakeman.push(lakemanObj);
       }
     });
-    console.log(corcoran);
 
     this.setState({
       rosters: {
@@ -232,7 +236,7 @@ export default class Admin extends Component {
     };
     console.log(playerObj.total);
     axios
-      .put("/api/keep/" + playerObj.pickID, { total: playerObj.total })
+      .put("/api/keep/" + playerObj.pickID, { total: playerObj.hr })
       .then(res => {
         console.log(res);
         window.location.reload();
@@ -246,6 +250,12 @@ export default class Admin extends Component {
           <div className="col-md-2"></div>
           <div className="col-md-8">
             <a href="/">Go To Scoreboard</a>
+            <br />
+            <a href="/admin">Admin</a>
+            <br />
+            <a href="/login">Log In</a>
+            <br />
+            <a href="/register">Register</a>
             <br />
             <form>
               <input
@@ -307,12 +317,12 @@ export default class Admin extends Component {
                 onChange={(this.acceptMonth = this.acceptMonth.bind(this))}
               >
                 <option value="">Select Month</option>
-                <option value="april">April</option>
-                <option value="may">May</option>
-                <option value="june">June</option>
-                <option value="july">July</option>
-                <option value="august">August</option>
-                <option value="september">September</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
               </Input>
             </FormGroup>
             <Button
