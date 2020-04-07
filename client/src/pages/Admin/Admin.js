@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import superagent from "superagent";
 import "./Admin.css";
 import Moment from "react-moment";
+import Momentjs from "moment";
 import axios from "axios";
 import {
   FormGroup,
@@ -34,6 +35,9 @@ export default class Admin extends Component {
       }
     };
   }
+  checkFutureMonth = e => {
+    console.log("we are checking the rosters for the month of ");
+  };
 
   acceptPlayerSearch = e => {
     console.log(e.target.value);
@@ -43,7 +47,7 @@ export default class Admin extends Component {
       }
     });
   };
-  acceptDongPlayer = e => {
+  acceptTeam = e => {
     this.setState({
       team: e.target.value
     });
@@ -132,7 +136,16 @@ export default class Admin extends Component {
     let lakemanObj = {};
     let ross = [];
     let rossObj = {};
-    const res = await fetch("/api/april/draft-roster");
+    let month = Momentjs()
+      .format("MMMM")
+      .toLowerCase();
+    console.log(month);
+    if (month === "march" || "april") {
+      month = "april";
+    } else {
+      console.log("we screwed up somehow");
+    }
+    const res = await fetch("/api/" + month + "/draft-roster");
     const data = await res.json();
     console.log(data);
     data.forEach(async data => {
@@ -319,11 +332,9 @@ export default class Admin extends Component {
                 type="select"
                 name="selectPlayer"
                 id="PlayerSelect"
-                onChange={
-                  (this.acceptDongPlayer = this.acceptDongPlayer.bind(this))
-                }
+                onChange={(this.acceptTeam = this.acceptTeam.bind(this))}
               >
-                <option value="">Select Dong Player</option>
+                <option value="">Select Team</option>
                 <option value="olsen">Olsen</option>
                 <option value="corcoran">Corcoran</option>
                 <option value="ross">Ross</option>
@@ -353,6 +364,21 @@ export default class Admin extends Component {
               Submit
             </Button>{" "}
             <br />
+            <Input
+              ref="month"
+              type="select"
+              name="futureMonth"
+              id="future"
+              onChange={(this.acceptMonth = this.acceptMonth.bind(this))}
+            >
+              <option value="">Select Month</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+            </Input>
           </div>
           <div className="col-md-2"></div>
         </div>

@@ -1,5 +1,6 @@
 const db = require("../models");
 const passport = require("../config/passport");
+const Momentjs = require("moment");
 
 const jwt = require("jsonwebtoken");
 
@@ -93,23 +94,45 @@ module.exports = function(app) {
       res.json(dbData);
     });
   });
-  // GET Route for Admin Page
-  app.get("/api/april/draft-roster", (req, res) => {
+  // GET Route for Admin Page April
+  let month = Momentjs()
+    .format("MMMM")
+    .toLowerCase();
+  console.log(month);
+  let monthNum = Momentjs().format("M");
+  console.log(monthNum);
+  if (month === "april" || "march") {
+    month = "april";
+    monthNum = "4";
+  }
+  // Get Route for Current Month on Admin Page
+  app.get("/api/" + month + "/draft-roster", (req, res) => {
     db.Drafts.findAll({
       where: {
         cut: false,
-        month: "4"
+        month: monthNum
       }
     }).then(dbData => {
       res.json(dbData);
     });
   });
-  // GET Route for the Scoreboard Page
-  app.get("/api/april/scoreboard", (req, res) => {
+  // GET Route for the Scoreboard
+  app.get("/api/" + month + "/scoreboard", (req, res) => {
     db.Drafts.findAll({
       where: {
         cut: false,
-        month: "4"
+        month: monthNum
+      }
+    }).then(dbData => {
+      res.json(dbData);
+    });
+  });
+  // GET Route for Specified Month on Admin Page
+  app.get("/api/review", (req, res) => {
+    db.Drafts.findAll({
+      where: {
+        cut: false,
+        month: req.params.month
       }
     }).then(dbData => {
       res.json(dbData);

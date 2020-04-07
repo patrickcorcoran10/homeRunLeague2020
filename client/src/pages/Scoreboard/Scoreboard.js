@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import "./Scoreboard.css";
+import Momentjs from "moment";
 import Moment from "react-moment";
 import "moment-timezone";
 import { Spinner } from "reactstrap";
+// import Tabs from "../../components/Tabs/Tabs";
+// import MonthScores from "../../components/Tabs/MonthScores";
 
 export default class Scoreboard extends Component {
   constructor(props) {
@@ -13,7 +16,13 @@ export default class Scoreboard extends Component {
       scores: {}
     };
   }
+
   async componentDidMount() {
+    console.log(
+      Momentjs()
+        .format("MMMM")
+        .toLowerCase()
+    );
     let olsen = [];
     let olsenObj = {};
     let massa = [];
@@ -24,7 +33,15 @@ export default class Scoreboard extends Component {
     let lakemanObj = {};
     let ross = [];
     let rossObj = {};
-    const res = await fetch("/api/april/scoreboard");
+    let month = Momentjs()
+      .format("MMMM")
+      .toLowerCase();
+    if (month === "march" || "april") {
+      month = "april";
+    } else {
+      console.log("we screwed up somehow");
+    }
+    const res = await fetch("/api/" + month + "/scoreboard");
     const data = await res.json();
     data.forEach(async data => {
       if (data.team === "olsen") {
@@ -95,14 +112,15 @@ export default class Scoreboard extends Component {
       try {
         const res = await fetch(url + team.pickID);
         const data = await res.json();
-
         pcObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr,
-          total: team.total
+          hrDisplayScore:
+            data.sport_hitting_tm.queryResults.row.hr - team.total,
+          hrToDate: data.sport_hitting_tm.queryResults.row.hr,
+          totalStartOfMonth: team.total,
+          month: team.month
         };
         pc.push(pcObj);
-        console.log(pc);
       } catch (error) {
         console.log("Swing and a miss: ", error);
       }
@@ -113,8 +131,11 @@ export default class Scoreboard extends Component {
         const data = await res.json();
         toObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr,
-          total: team.total
+          hrDisplayScore:
+            data.sport_hitting_tm.queryResults.row.hr - team.total,
+          hrToDate: data.sport_hitting_tm.queryResults.row.hr,
+          totalStartOfMonth: team.total,
+          month: team.month
         };
         to.push(toObj);
       } catch (error) {
@@ -127,8 +148,11 @@ export default class Scoreboard extends Component {
         const data = await res.json();
         mmObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr,
-          total: team.total
+          hrDisplayScore:
+            data.sport_hitting_tm.queryResults.row.hr - team.total,
+          hrToDate: data.sport_hitting_tm.queryResults.row.hr,
+          totalStartOfMonth: team.total,
+          month: team.month
         };
         mm.push(mmObj);
       } catch (error) {
@@ -141,8 +165,11 @@ export default class Scoreboard extends Component {
         const data = await res.json();
         jlObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr,
-          total: team.total
+          hrDisplayScore:
+            data.sport_hitting_tm.queryResults.row.hr - team.total,
+          hrToDate: data.sport_hitting_tm.queryResults.row.hr,
+          totalStartOfMonth: team.total,
+          month: team.month
         };
         jl.push(jlObj);
       } catch (error) {
@@ -155,23 +182,27 @@ export default class Scoreboard extends Component {
         const data = await res.json();
         rrObj = {
           name: team.name,
-          hr: data.sport_hitting_tm.queryResults.row.hr,
-          total: team.total
+          hrDisplayScore:
+            data.sport_hitting_tm.queryResults.row.hr - team.total,
+          hrToDate: data.sport_hitting_tm.queryResults.row.hr,
+          totalStartOfMonth: team.total,
+          month: team.month
         };
         rr.push(rrObj);
       } catch (error) {
         console.log("Swing and a miss: ", error);
       }
-      await this.setState({
-        scores: {
-          pc,
-          to,
-          mm,
-          jl,
-          rr
-        }
-      });
     });
+    await this.setState({
+      scores: {
+        pc,
+        to,
+        mm,
+        jl,
+        rr
+      }
+    });
+
     setTimeout(
       function() {
         this.setState({
@@ -180,7 +211,43 @@ export default class Scoreboard extends Component {
       }.bind(this),
       1000
     );
-    console.log("done");
+    // -------------------------------------------
+    class CreatePlayer {
+      constructor(name, pickID, total, month) {
+        this.name = name;
+        this.pickID = pickID;
+        this.total = total;
+        this.month = month;
+      }
+    }
+    class CreateTeam {
+      constructor(team) {
+        this.team = team;
+      }
+    }
+
+    let roster = [];
+    let team = [];
+    let homeRunTeam = {};
+    let guy = {
+      name: "patty the catcher",
+      playerID: "123456",
+      hr: 55,
+      month: "May"
+    };
+
+    for (let i = 0; i < 4; i++) {
+      roster[i] = new CreatePlayer(guy.name, guy.playerID, guy.hr, guy.month);
+      team.push(roster[i]);
+      homeRunTeam = new CreateTeam(team);
+    }
+    // console.log("Class Roster Array: ", roster);
+    // console.log("Class Team Creation Array: ", team);
+    console.log(homeRunTeam);
+    for (let i = 0; i < homeRunTeam.team.length; i++) {
+      console.log(homeRunTeam.team[i].name);
+    }
+    // ------------------------------------------------
   }
 
   render() {
@@ -201,43 +268,54 @@ export default class Scoreboard extends Component {
         </div>
       );
     }
+    let month = Momentjs()
+      .format("MMMM")
+      .toLowerCase();
+    console.log(month);
+    if (month === "march" || "april") {
+      console.log("we got the month");
+    } else {
+      console.log("we screwed up somehow");
+    }
 
     let corcoran = this.state.scores.pc.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr - el.total}
+          {el.name} | {el.hrDisplayScore}
         </p>
       </div>
     ));
     let olsen = this.state.scores.to.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr - el.total}
+          {el.name} | {el.hrDisplayScore}
         </p>
       </div>
     ));
     let ross = this.state.scores.rr.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr - el.total}
+          {el.name} | {el.hrDisplayScore}
         </p>
       </div>
     ));
     let massa = this.state.scores.mm.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr - el.total}
+          {el.name} | {el.hrDisplayScore}
         </p>
       </div>
     ));
     let lakeman = this.state.scores.jl.map((el, index) => (
       <div key={index}>
         <p>
-          {el.name} | {el.hr - el.total}
+          {el.name} | {el.hrDisplayScore}
         </p>
       </div>
     ));
+
     console.log(this.state);
+
     return (
       <div className="container">
         <div className="title">
@@ -318,28 +396,36 @@ export default class Scoreboard extends Component {
           <div className="col-md-2"></div>
         </div>
         <div className="row">
-          <div className="col-md-1"></div>
-          <div className="col-md-2">
-            <h6>Corcoran</h6>
-            {corcoran}
+          <div className="col-md-2"></div>
+          <div className="col-md-8">
+            {/* <Tabs /> */}
+            {/* <MonthScores /> */}
+            <div className="row">
+              <div className="col-md-1"></div>
+              <div className="col-md-2">
+                <h6>Corcoran</h6>
+                {corcoran}
+              </div>
+              <div className="col-md-2">
+                <h6>Olsen</h6>
+                {olsen}
+              </div>
+              <div className="col-md-2">
+                <h6>Massa</h6>
+                {massa}
+              </div>
+              <div className="col-md-2">
+                <h6>Ross</h6>
+                {ross}
+              </div>
+              <div className="col-md-2">
+                <h6>Lakeman</h6>
+                {lakeman}
+              </div>
+              <div className="col-md-1"></div>
+            </div>
           </div>
-          <div className="col-md-2">
-            <h6>Olsen</h6>
-            {olsen}
-          </div>
-          <div className="col-md-2">
-            <h6>Massa</h6>
-            {massa}
-          </div>
-          <div className="col-md-2">
-            <h6>Ross</h6>
-            {ross}
-          </div>
-          <div className="col-md-2">
-            <h6>Lakeman</h6>
-            {lakeman}
-          </div>
-          <div className="col-md-1"></div>
+          <div className="col-md-2"></div>
         </div>
       </div>
     );
